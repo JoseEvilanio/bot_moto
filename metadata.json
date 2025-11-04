@@ -1,0 +1,17 @@
+{
+  "name": "MotoBot Workshop Assistant",
+  "description": "A chatbot integrated into a motorcycle workshop management system, allowing users to ask questions and receive instant assistance from Gemini on topics like maintenance, parts, and administration.",
+  "requestFramePermissions": [],
+  "mcpServers": {
+    "supabase-mcp-server": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_0c55733be2dedc7ed461f548fbe0fd24e5347653"
+      ],
+      "env": {}
+    }
+  }
+}
