@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { Message, Vehicle, ServiceOrder } from './types';
 import { initializeChat, sendMessage } from './services/geminiService';
@@ -358,16 +359,23 @@ const DashboardPage: React.FC<{ user: User; vehicles: Vehicle[]; services: Servi
 
 const MyVehiclesPage: React.FC<{ vehicles: Vehicle[]; onAddVehicle: (v: Omit<Vehicle, 'id' | 'user_id'>) => void }> = ({ vehicles, onAddVehicle }) => {
     const [isAdding, setIsAdding] = useState(false);
-    const [newVehicle, setNewVehicle] = useState({ make: '', model: '', year: new Date().getFullYear(), license_plate: '' });
+    const [newVehicle, setNewVehicle] = useState({ make: '', model: '', year: String(new Date().getFullYear()), license_plate: '' });
 
     const handleSave = () => {
-        if (!newVehicle.make || !newVehicle.model || !newVehicle.license_plate) {
-            alert("Por favor, preencha todos os campos.");
+        const yearNumber = parseInt(newVehicle.year, 10);
+        if (!newVehicle.make || !newVehicle.model || !newVehicle.license_plate || !newVehicle.year || isNaN(yearNumber) || yearNumber < 1900 || yearNumber > (new Date().getFullYear() + 1)) {
+            alert("Por favor, preencha todos os campos corretamente. O ano deve ser um número válido.");
             return;
         }
-        onAddVehicle(newVehicle);
+
+        onAddVehicle({
+            make: newVehicle.make,
+            model: newVehicle.model,
+            year: yearNumber,
+            license_plate: newVehicle.license_plate
+        });
         setIsAdding(false);
-        setNewVehicle({ make: '', model: '', year: new Date().getFullYear(), license_plate: '' });
+        setNewVehicle({ make: '', model: '', year: String(new Date().getFullYear()), license_plate: '' });
     }
 
     return (
@@ -381,7 +389,7 @@ const MyVehiclesPage: React.FC<{ vehicles: Vehicle[]; onAddVehicle: (v: Omit<Veh
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input value={newVehicle.make} onChange={e => setNewVehicle(v => ({...v, make: e.target.value}))} placeholder="Marca (ex: Honda)" className="w-full p-2 border rounded"/>
                         <input value={newVehicle.model} onChange={e => setNewVehicle(v => ({...v, model: e.target.value}))} placeholder="Modelo (ex: CB 300R)" className="w-full p-2 border rounded"/>
-                        <input value={newVehicle.year} onChange={e => setNewVehicle(v => ({...v, year: parseInt(e.target.value)}))} type="number" placeholder="Ano" className="w-full p-2 border rounded"/>
+                        <input value={newVehicle.year} onChange={e => setNewVehicle(v => ({...v, year: e.target.value}))} type="number" placeholder="Ano" className="w-full p-2 border rounded"/>
                         <input value={newVehicle.license_plate} onChange={e => setNewVehicle(v => ({...v, license_plate: e.target.value}))} placeholder="Placa" className="w-full p-2 border rounded"/>
                     </div>
                     <div className="flex gap-4 mt-4">
